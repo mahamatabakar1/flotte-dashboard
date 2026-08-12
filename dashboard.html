@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Utilisation de flotte - Quebec</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root { --bleu:#1b3a5c; --accent:#2e86ab; --sol:#c85a3c; --fond:#f4f2ed; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--fond); font-family:-apple-system,BlinkMacSystemFont,sans-serif; color:#1a1a1a; }
+  header { background:var(--bleu); color:#fff; padding:32px 40px; }
+  h1 { margin:0 0 6px; font-size:26px; font-weight:600; }
+  header p { margin:0; opacity:.75; font-size:14px; }
+  .conteneur { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+  .kpi { background:#fff; border-radius:10px; padding:22px 24px; border-left:3px solid var(--accent); }
+  .kpi .valeur { font-size:34px; font-weight:600; color:var(--bleu); line-height:1.1; }
+  .kpi .titre { font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#777; margin-top:6px; }
+  .grille { display:grid; grid-template-columns:repeat(auto-fit,minmax(460px,1fr)); gap:20px; }
+  .carte { background:#fff; border-radius:10px; padding:24px; }
+  .carte h2 { margin:0 0 18px; font-size:15px; font-weight:600; color:var(--bleu); }
+  footer { text-align:center; padding:24px; font-size:12px; color:#888; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Utilisation de flotte aerienne - espace aerien quebecois</h1>
+  <p>Donnees OpenSky Network - genere le 12/08/2026 23:15</p>
+</header>
+<div class="conteneur">
+  <div class="kpis">
+    <div class="kpi"><div class="valeur">252</div><div class="titre">Aeronefs distincts</div></div>
+    <div class="kpi"><div class="valeur">306</div><div class="titre">Observations</div></div>
+    <div class="kpi"><div class="valeur">87.9 %</div><div class="titre">Taux d'utilisation</div></div>
+    <div class="kpi"><div class="valeur">2</div><div class="titre">Releves effectues</div></div>
+  </div>
+  <div class="grille">
+    <div class="carte"><h2>Evolution : en vol vs au sol</h2><canvas id="g1"></canvas></div>
+    <div class="carte"><h2>Transporteurs canadiens</h2><canvas id="g2"></canvas></div>
+    <div class="carte"><h2>Repartition par pays d'immatriculation</h2><canvas id="g3"></canvas></div>
+    <div class="carte"><h2>Distribution des altitudes (m)</h2><canvas id="g4"></canvas></div>
+  </div>
+</div>
+<footer>Pipeline ETL - Python, SQL Server, schema en etoile</footer>
+<script>
+const D = {"evolution": {"labels": ["11/08 22:17", "11/08 22:59"], "en_vol": [126, 143], "au_sol": [18, 19]}, "pays": {"labels": ["Canada", "United States", "Germany", "France", "United Kingdom", "Portugal", "Ireland", "Kingdom of the Netherlands"], "valeurs": [194, 32, 15, 12, 11, 6, 5, 4]}, "compagnies": {"labels": ["Air Canada", "WestJet", "Porter", "Air Canada Rouge", "PTR", "AIE", "Pivot", "CGC", "Jazz", "CGO"], "valeurs": [32, 20, 15, 10, 9, 8, 6, 5, 5, 4]}, "altitudes": {"labels": ["0-1k", "1-3k", "3-6k", "6-9k", "9-12k", "12k+"], "valeurs": [37, 29, 24, 29, 121, 29]}};
+const BLEU = '#2e86ab', ROUGE = '#c85a3c', FONCE = '#1b3a5c';
+new Chart(document.getElementById('g1'), {
+  type: 'line',
+  data: { labels: D.evolution.labels, datasets: [
+    { label:'En vol', data:D.evolution.en_vol, borderColor:BLEU, backgroundColor:'rgba(46,134,171,.1)', fill:true, tension:.3 },
+    { label:'Au sol', data:D.evolution.au_sol, borderColor:ROUGE, backgroundColor:'rgba(200,90,60,.1)', fill:true, tension:.3 }
+  ]},
+  options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+});
+new Chart(document.getElementById('g2'), {
+  type: 'bar',
+  data: { labels: D.compagnies.labels, datasets:[{ label:'Observations', data:D.compagnies.valeurs, backgroundColor:BLEU }] },
+  options: { indexAxis:'y', plugins:{ legend:{ display:false } } }
+});
+new Chart(document.getElementById('g3'), {
+  type: 'doughnut',
+  data: { labels: D.pays.labels, datasets:[{ data:D.pays.valeurs,
+    backgroundColor:['#1b3a5c','#2e86ab','#5fa8c9','#94c5d8','#c85a3c','#d98b6f','#e8b4a0','#cfcfcf'] }] },
+  options: { plugins:{ legend:{ position:'right' } } }
+});
+new Chart(document.getElementById('g4'), {
+  type: 'bar',
+  data: { labels: D.altitudes.labels, datasets:[{ label:'Aeronefs', data:D.altitudes.valeurs, backgroundColor:FONCE }] },
+  options: { plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+});
+</script>
+</body>
+</html>
