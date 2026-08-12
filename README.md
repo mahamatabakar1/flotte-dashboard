@@ -41,6 +41,26 @@ de calculer les taux d'utilisation par période.
 | `src/extraction.py` | Appel de l'API OpenSky sur une zone géographique, archivage du JSON brut |
 | `src/transformation.py` | Conversion en DataFrame, typage, nettoyage, export CSV |
 | `src/chargement.py` | Création du schéma et chargement incrémental dans SQL Server |
+| `src/icao24_canada.py` | Conversion bidirectionnelle marque d'immatriculation ↔ adresse ICAO24 |
+| `src/registre.py` | Intégration du registre Transport Canada et appariement des sources |
+| `src/analyse.py` | Requêtes analytiques sur le schéma en étoile |
+| `src/dashboard.py` | Génération du tableau de bord HTML |
+
+
+## Résolution d'identifiants entre sources
+
+Les deux sources décrivent les mêmes aéronefs sans clé commune : OpenSky les
+identifie par leur adresse transpondeur ICAO24 (hexadécimale, ex. `c0064c`),
+Transport Canada par leur marque d'immatriculation (ex. `C-FCJZ`).
+
+Le bloc canadien d'adresses ICAO24 étant attribué séquentiellement à partir de
+`C00001`, la correspondance est calculable. Le module `icao24_canada.py`
+implémente cet encodage dans les deux sens, validé sur des paires observées.
+
+**Résultat : 153 appariements sur 160 aéronefs canadiens, soit 96 %.**
+
+La dimension `dim_registre` apporte ainsi le constructeur, le modèle et la
+catégorie de chaque appareil observé.
 
 ## Technologies
 
@@ -61,9 +81,9 @@ Les identifiants OpenSky sont lus depuis un fichier `.env` non versionné.
 
 ## Feuille de route
 
-- [ ] Intégration du registre Transport Canada (jointure ICAO24 / immatriculation)
-- [ ] Requêtes analytiques : taux d'utilisation, temps au sol, routes fréquentes
-- [ ] Tableau de bord de visualisation
+- [x] Intégration du registre Transport Canada (jointure ICAO24 / immatriculation)
+- [x] Requêtes analytiques : taux d'utilisation, temps au sol, routes fréquentes
+- [x] Tableau de bord de visualisation
 - [ ] Automatisation de la collecte
 
 ---
