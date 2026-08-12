@@ -3,6 +3,9 @@
 Pipeline ETL qui collecte, structure et analyse les données de vol des aéronefs
 survolant le Québec, en vue de mesurer le **taux d'utilisation d'une flotte**.
 
+
+![Tableau de bord](dashboard.png)
+
 ## Problème métier
 
 Dans l'industrie de la location d'aéronefs, un appareil immobilisé au sol ne
